@@ -14,3 +14,4 @@ async def get_all_tags(current_user: str = Depends(get_current_user)) -> JSONRes
         'tags': 'hs',
         'previous_id': 'sfa',
     })
+    
