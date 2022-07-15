@@ -35,6 +35,12 @@ services:
     networks:
       - backend
     restart: always
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
 networks:
   backend:
     driver: bridge
