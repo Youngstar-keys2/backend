@@ -9,11 +9,12 @@ from app.db.db import DB
 from app.exceptions import CommonException, InternalServerError
 from app.routers.registr import registr_router
 from app.routers.tags import tags_router
+from starlette.middleware.cors import CORSMiddleware
 logger = getLogger(__name__)
 
 logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 
-
+origins = ["*"]
 app = FastAPI(title="Back Hack")
 
 
@@ -75,3 +76,10 @@ async def unicorn_api_exception_handler(request: Request, exc: CommonException):
 
 app.include_router(registr_router)
 app.include_router(tags_router)
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
