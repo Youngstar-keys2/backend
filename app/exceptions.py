@@ -32,3 +32,8 @@ class InternalServerError(Exception):
             "message": self.message,
             "debug": self.debug,
         }
+
+
+class ForbiddenException(CommonException):
+    def __init__(self) -> None:
+        super().__init__(status.HTTP_403_FORBIDDEN, "Forbidden")

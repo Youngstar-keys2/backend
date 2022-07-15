@@ -7,14 +7,14 @@ import logging
 from logging import getLogger
 from app.db.db import DB
 from app.exceptions import CommonException, InternalServerError
-
-
+from app.routers.registr import registr_router
+from app.routers.tags import tags_router
 logger = getLogger(__name__)
 
 logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 
 
-app = FastAPI(title="Yandex Marketplace")
+app = FastAPI(title="Back Hack")
 
 
 @app.on_event("startup")
@@ -43,7 +43,9 @@ async def log_requst(request: Request, call_next):
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
     logger.error("***ERROR*** Status code 400 Message:")
-    return JSONResponse(status_code=400, content={"code": 400, "message": "Validation Failed"})
+    return JSONResponse(
+        status_code=400, content={"code": 400, "message": "Validation Failed"}
+    )
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -58,11 +60,18 @@ async def http_exception(request, exc):
 @app.exception_handler(Exception)
 async def common_exception_handler(request: Request, exception: Exception):
     error = InternalServerError(debug=str(exception))
-    logger.error(f"***ERROR*** Status code {error.status_code} Message: {error.message}")
+    logger.error(
+        f"***ERROR*** Status code {error.status_code} Message: {error.message}"
+    )
     return JSONResponse(status_code=error.status_code, content=error.to_json())
 
 
 @app.exception_handler(CommonException)
 async def unicorn_api_exception_handler(request: Request, exc: CommonException):
     logger.error(f"***ERROR*** Status code {exc.code} Message: {exc.error}")
-    return JSONResponse(status_code=exc.code, content={"code": exc.code, "message": exc.error})
+    return JSONResponse(
+        status_code=exc.code, content={"code": exc.code, "message": exc.error}
+    )
+
+app.include_router(registr_router)
+app.include_router(tags_router)
