@@ -17,10 +17,12 @@ async def main():
         items = await DB.con.fetch(sql, offset)
         for item in items:
             for category in categories:
+                sql = """insert into subcategories(name) values ($1)"""
+                await DB.con.execute(sql, item[category])
                 sql = """select id from categories where name = $1"""
                 idd = await DB.con.fetchval(sql, category)
                 sql = """insert into categories_subcategories (category_id, subcategory_name)
-                         values ($1, $2)"""
+                         values ($1, $2) on conflict do nothing"""
                 await DB.con.execute(sql, idd, item[category])
                 sql = """update subcategories set parent_category=$1 where name = $2"""
                 await DB.con.execute(sql, idd, item[category])

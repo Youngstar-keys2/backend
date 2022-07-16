@@ -64,9 +64,9 @@ async def main():
             )
             await DB.con.execute(sql, l[i])
             sql = """insert into categories_subcategories(category_id, subcategory_name)
-                     values ($1, $2)"""
+                     values ($1, $2) on conflict do nothing"""
             await DB.con.execute(sql, category, l[i])
             sql = """insert into items_subcategories(item_id, name_sub)
-                     values ($1, $2)"""
+                     values ($1, $2) on conflict do nothing"""
             await DB.con.execute(sql, result, l[i])
     l.clear()
