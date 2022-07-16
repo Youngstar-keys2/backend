@@ -4,6 +4,50 @@ from asyncpg import Record
 from app.db.db import DB
 
 
+# async def load_tags():
+#     categories = [
+#         "country_code",
+#         "place",
+#         "statee",
+#         "province",
+#         "community",
+#     ]
+#     sql = """
+#         truncate table items cascade
+#     """
+#     await DB.con.execute(sql)
+#     sql = """truncate table subcategories cascade"""
+#     await DB.con.execute(sql)
+#     sql = """truncate table categories cascade"""
+#     await DB.con.execute(sql)
+
+#     for category in categories:
+#         k = 0
+#         sql = f"""select distinct({category})  from country"""
+#         tags = await DB.con.fetch(sql)
+#         tags = [x[category] for x in tags]
+#         sql = """insert into categories(name) values ($1) on conflict do nothing RETURNING id"""
+#         idk = await DB.con.fetchval(sql, category)
+#         for link in tags:
+#             print(k)
+#             if not link:
+#                 continue
+#             sql = """insert into subcategories(name,parent_category ) values ($1,$2) on conflict do nothing"""
+#             await DB.con.execute(sql, link, idk)
+#             sql = (
+#                 f""" select id,latitude ,longtitude from country where {category}=$1"""
+#             )
+#             info = await DB.con.fetch(sql, link)
+#             for itemsk in info:
+#                 sql = "insert into items (latitude, longtitude) values ($1,$2) returning id"
+#                 id = await DB.con.fetchval(
+#                     sql, itemsk["latitude"], itemsk["longtitude"]
+#                 )
+#                 sql = "insert into items_subcategories(item_id, name_sub) values ($1,$2) on conflict do nothing"
+#                 await DB.con.execute(sql, id, link)
+#                 k += 1
+
+
 async def load_tags():
     categories = [
         "country_code",
@@ -13,39 +57,38 @@ async def load_tags():
         "community",
     ]
     sql = """
-        delete from items
+        truncate table items cascade
     """
     await DB.con.execute(sql)
-    sql = """delete from subcategories"""
+    sql = """truncate table subcategories cascade"""
     await DB.con.execute(sql)
-    sql = """delete from categories"""
+    sql = """truncate table categories cascade"""
     await DB.con.execute(sql)
-
+    ids = dict()
     for category in categories:
-        k = 0
-        sql = f"""select distinct({category})  from country"""
-        tags = await DB.con.fetch(sql)
-        tags = [x[category] for x in tags]
         sql = """insert into categories(name) values ($1) on conflict do nothing RETURNING id"""
-        idk = await DB.con.fetchval(sql, category)
-        for link in tags:
-            print(k)
-            if not link:
+        temp_id = await DB.con.fetchval(sql, category)
+        ids[category] = temp_id
+    sql = """select id,country_code,zip_code,place,statee,province,community,latitude,longtitude from country"""
+    items = await DB.con.fetch(sql)
+    cnt = 0
+    for item in items[:500]:
+        cnt += 1
+        if cnt % 100 == 0:
+            print(cnt)
+        sql = """insert into items(id,latitude,longtitude) values ($1,$2,$3) on conflict do nothing returning id"""
+        idd = await DB.con.fetchval(
+            sql, item["id"], item["latitude"], item["longtitude"]
+        )
+        if not idd:
+            continue
+        for category in categories:
+            if not item[category]:
                 continue
-            sql = """insert into subcategories(name,parent_category ) values ($1,$2) on conflict do nothing"""
-            await DB.con.execute(sql, link, idk)
-            sql = (
-                f""" select id,latitude ,longtitude from country where {category}=$1"""
-            )
-            info = await DB.con.fetch(sql, link)
-            for itemsk in info:
-                sql = "insert into items (latitude, longtitude) values ($1,$2) returning id"
-                id = await DB.con.fetchval(
-                    sql, itemsk["latitude"], itemsk["longtitude"]
-                )
-                sql = "insert into items_subcategories(item_id, name_sub) values ($1,$2) on conflict do nothing"
-                await DB.con.execute(sql, id, link)
-                k += 1
+            sql = """insert into subcategories(name,parent_category) values ($1,$2) on conflict do nothing"""
+            await DB.con.execute(sql, item[category], ids[category])
+            sql = """insert into items_subcategories(item_id,name_sub) values ($1,$2) on conflict do nothing"""
+            await DB.con.execute(sql, item["id"], item[category])
 
 
 async def seek_tags_info(seek: list, last_page: int):
