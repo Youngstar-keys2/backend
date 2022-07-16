@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Path, Query, status
+from fastapi import APIRouter,  Query, status
 from fastapi.param_functions import Depends
 from fastapi.responses import JSONResponse
 from app.auth.oauth2 import get_current_user

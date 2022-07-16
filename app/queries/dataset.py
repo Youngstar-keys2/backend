@@ -1,6 +1,3 @@
-import hashlib
-from asyncpg import Record
-
 from app.db.db import DB
 
 
@@ -48,8 +45,8 @@ async def load_dataset():
             prev = 0
             for i in range(prev, len(words)):
                 query = " ".join(words[prev:i])
-                if query == 'РОССИЯ':
-                    query = 'RU'
+                if query == "РОССИЯ":
+                    query = "RU"
                 category = await get_category_if_present(query)
                 if category:
                     categories[query] = category
