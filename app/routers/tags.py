@@ -13,8 +13,9 @@ tags_router = APIRouter(tags=["Tags"])
 async def get_all_tags(
     current_user: str = Depends(get_current_user),
     category: str = Query(..., description="Название категории"),
+    page: int = Query(..., description="страница"),
 ) -> JSONResponse:
-    back = await tags.get_tags(category)
+    back = await tags.get_tags(category, page)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"tags": [dict(**x) for x in back]},
