@@ -106,4 +106,4 @@ async def seek_tags_info(seek: list, last_page: int):
 
 async def get_tags(category: str, page: int):
     sql = """select s.name from subcategories as s join categories as c on  s.parent_category = c.id where c.name = $1 limit $2 offset $3"""
-    return await DB.con.fetch(sql, category, 30, page)
+    return await DB.con.fetch(sql, category, 100, page)
