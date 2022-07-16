@@ -59,17 +59,17 @@ async def load_tags():
     sql = """
         truncate table items cascade
     """
-    await DB.con.execute(sql)
+    # await DB.con.execute(sql)
     sql = """truncate table subcategories cascade"""
-    await DB.con.execute(sql)
+    # await DB.con.execute(sql)
     sql = """truncate table categories cascade"""
-    await DB.con.execute(sql)
+    # await DB.con.execute(sql)
     ids = dict()
     for category in categories:
         sql = """insert into categories(name) values ($1) on conflict do nothing RETURNING id"""
         temp_id = await DB.con.fetchval(sql, category)
         ids[category] = temp_id
-    for offset in range(0,1548347,1000):
+    for offset in range(0, 1548347, 1000):
         sql = """select id,country_code,zip_code,place,statee,province,community,latitude,longtitude from country
                 limit 1000 offset $1"""
         items = await DB.con.fetch(sql, offset)

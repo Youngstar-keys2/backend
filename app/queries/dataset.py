@@ -16,9 +16,16 @@ from app.db.db import DB
 #     address_maker text
 
 # TODO Чекнуть то что в подкатегории могут быть заданы списком
+# TODO Россия вру
 
 
 async def load_dataset():
+    async def get_category_if_present(subcategory: str) -> str | None:
+        sql = """select c.name from categories as c join subcategories as sc
+                 on c.id = sc.parent_category
+                 where sc.name = $1"""
+        return await DB.fetchval(sql, subcategory)
+
     categories = [
         "id",
         "codes",
@@ -31,16 +38,22 @@ async def load_dataset():
         "country",
         "address_maker",
     ]
-    sql = """
-        truncate table data cascade
-    """
-    await DB.con.execute(sql)
-    sql = """truncate table data_categories cascade"""
-    await DB.con.execute(sql)
-    sql = """truncate table data_subcategories cascade"""
-    await DB.con.execute(sql)
-    sql = """truncate table data_data_subcategories cascade"""
-    await DB.con.execute(sql)
+    for offset in range(0, 66755, 1000):
+        sql = """select * from dataset limit 1000 offset $1"""
+        items = await DB.con.fetch(sql, offset)
+        for item in items:
+            categories = dict()
+            hernya = item["address_maker"]
+            words = hernya.split(" ")
+            prev = 0
+            for i in range(prev, len(words)):
+                query = " ".join(words[prev:i])
+                if query == 'РОССИЯ':
+                    query = 'RU'
+                category = await get_category_if_present(query)
+                if category:
+                    categories[query] = category
+                    prev = i
 
     for category in categories:
         k = 0

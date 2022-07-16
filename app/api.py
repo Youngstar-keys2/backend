@@ -6,7 +6,8 @@ import time
 import logging
 from logging import getLogger
 from app.db.db import DB
-from app.db.redis import Redis
+
+# from app.db.redis import Redis
 from app.exceptions import CommonException, InternalServerError
 from app.routers.registr import registr_router
 from app.routers.tags import tags_router
@@ -23,14 +24,14 @@ app = FastAPI(title="Back Hack")
 @app.on_event("startup")
 async def startup() -> None:
     await DB.connect_db()
-    await Redis.connect_redis()
+    # await Redis.connect_redis()
     # await Redis.load_tags()
 
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
     await DB.disconnect_db()
-    await Redis.disconnect_redis()
+    # await Redis.disconnect_redis()
 
 
 @app.middleware("http")

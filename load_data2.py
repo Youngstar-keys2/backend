@@ -1,11 +1,6 @@
 import asyncio
-
-from yaml import load
-
 from app.db.db import DB
 from app.queries.dataset import load_dataset
-
-
 
 
 async def main():

@@ -48,8 +48,6 @@ create table if not exists items_subcategories
     name_sub text references subcategories(name) on delete cascade,
     unique(item_id, name_sub)
 );
-
-
 create table if not exists dataset
 (
     id integer primary key,
@@ -63,23 +61,4 @@ create table if not exists dataset
     maker text,
     country text,
     address_maker text
-);
-create table if not exists data_categories
-(
-    id serial primary key,
-    name text unique not null
-);
-create table if not exists data_subcategories
-(
-    name text primary key,
-    parent_category_id integer references data_categories(id)
-);
-create table if not exists data_data_subcategories
-(
-    data_id integer references data(id),
-    data_subcategories_name text references data_subcategories(name)
-);
-create table if not exists data
-(
-    id serial primary key
 );
