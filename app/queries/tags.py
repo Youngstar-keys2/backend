@@ -69,26 +69,24 @@ async def load_tags():
         sql = """insert into categories(name) values ($1) on conflict do nothing RETURNING id"""
         temp_id = await DB.con.fetchval(sql, category)
         ids[category] = temp_id
-    sql = """select id,country_code,zip_code,place,statee,province,community,latitude,longtitude from country"""
-    items = await DB.con.fetch(sql)
-    cnt = 0
-    for item in items[:500]:
-        cnt += 1
-        if cnt % 100 == 0:
-            print(cnt)
-        sql = """insert into items(id,latitude,longtitude) values ($1,$2,$3) on conflict do nothing returning id"""
-        idd = await DB.con.fetchval(
-            sql, item["id"], item["latitude"], item["longtitude"]
-        )
-        if not idd:
-            continue
-        for category in categories:
-            if not item[category]:
+    for offset in range(0,1548347,1000):
+        sql = """select id,country_code,zip_code,place,statee,province,community,latitude,longtitude from country
+                limit 1000 offset $1"""
+        items = await DB.con.fetch(sql, offset)
+        for item in items:
+            sql = """insert into items(id,latitude,longtitude) values ($1,$2,$3) on conflict do nothing returning id"""
+            idd = await DB.con.fetchval(
+                sql, item["id"], item["latitude"], item["longtitude"]
+            )
+            if not idd:
                 continue
-            sql = """insert into subcategories(name,parent_category) values ($1,$2) on conflict do nothing"""
-            await DB.con.execute(sql, item[category], ids[category])
-            sql = """insert into items_subcategories(item_id,name_sub) values ($1,$2) on conflict do nothing"""
-            await DB.con.execute(sql, item["id"], item[category])
+            for category in categories:
+                if not item[category]:
+                    continue
+                sql = """insert into subcategories(name,parent_category) values ($1,$2) on conflict do nothing"""
+                await DB.con.execute(sql, item[category], ids[category])
+                sql = """insert into items_subcategories(item_id,name_sub) values ($1,$2) on conflict do nothing"""
+                await DB.con.execute(sql, item["id"], item[category])
 
 
 async def seek_tags_info(seek: list, last_page: int):
