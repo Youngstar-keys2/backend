@@ -22,5 +22,28 @@ create table if not exists users
     password text  not null,
     applicant text not null,
     addres_applicant text not null,
-    country text not null
+    country text not null,
+    il text not null,
+);
+create table if not exists categories
+(
+    id serial primary key,
+    name text not null unique
+);
+create table if not exists subcategories
+(
+    name text primary key,
+    parent_category int references categories(id)
+);
+create table if not exists items
+(
+    id serial primary key,
+     latitude float8,
+     longtitude float8
+
+);
+create table if not exists items_subcategories
+(
+    item_id int references items(id) on delete cascade,
+    name_sub text references subcategories(name) on delete cascade
 );

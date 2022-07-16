@@ -33,11 +33,15 @@ async def main():
         for i in d:
             k = 0
             for j in i:
-               
+
                 if j != j:
                     l.append(None)
                 else:
                     l.append(j)
-            await conn.execute(sql,l[0],l[1],l[2],l[3],l[4],l[5],l[6],l[7],l[8],l[9],l[10])
+            await conn.execute(
+                sql, l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10]
+            )
             l.clear()
+
+
 asyncio.get_event_loop().run_until_complete(main())

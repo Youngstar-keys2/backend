@@ -13,6 +13,6 @@ class TokenData(BaseModel):
 
 
 class UserReg(BaseModel):
-    applicant: str = Form(..., title='Имя заявителя')
-    addres_applicant: str = Form(..., title='Аддрес заявителя')
-    country: str = Form(..., title='страна заявителя')
+    applicant: str = Form(..., title="Имя заявителя")
+    addres_applicant: str = Form(..., title="Аддрес заявителя")
+    country: str = Form(..., title="страна заявителя")
