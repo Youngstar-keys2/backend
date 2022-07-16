@@ -35,6 +35,12 @@ create table if not exists subcategories
     name text primary key,
     parent_category int references categories(id)
 );
+create table if not exists categories_subcategories
+(
+    category_id integer references categories(id),
+    subcategory_name text references subcategories(name),
+    unique(category_id, subcategory_name)
+);
 create table if not exists items
 (
     id integer primary key,

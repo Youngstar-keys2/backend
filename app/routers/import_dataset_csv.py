@@ -57,10 +57,15 @@ async def main():
         for i in range(1, 11):
             sql = """insert into categories(name) values ($1) on conflict do nothing"""
             await DB.con.execute(sql, topic[i])
+            sql = """select id from categories where name = $1"""
+            category = await DB.con.fetchval(sql, topic[i])
             sql = (
                 """insert into subcategories(name) values ($1) on conflict do nothing"""
             )
             await DB.con.execute(sql, l[i])
+            sql = """insert into categories_subcategories(category_id, subcategory_name)
+                     values ($1, $2)"""
+            await DB.con.execute(sql, category, l[i])
             sql = """insert into items_subcategories(item_id, name_sub)
                      values ($1, $2)"""
             await DB.con.execute(sql, result, l[i])
