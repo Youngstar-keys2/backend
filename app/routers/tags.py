@@ -3,7 +3,6 @@ from fastapi import APIRouter, Path, Query, status
 from fastapi.param_functions import Depends
 from fastapi.responses import JSONResponse
 from app.auth.oauth2 import get_current_user
-from app.db.redis import Redis
 from app.queries import tags
 
 tags_router = APIRouter(tags=["Tags"])
