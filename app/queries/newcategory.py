@@ -49,10 +49,9 @@ async def add_new_category(cat: Newcategory):
         "address_applicant",
         "maker",
         "country",
-        "address_maker",
     ]
-    l = [cat.code, cat.tex_regl, cat.group, cat.name, cat.il, cat.applicant, cat.addres_applicant,cat.izgotovitel ,cat.country]
-    for i in range( len(topics)):
+    l = [cat.code, cat.tex_regl, cat.group, cat.name, cat.il, cat.applicant, cat.addres_applicant, cat.izgotovitel ,cat.country]
+    for i in range( len(topic)):
         sql = """insert into categories(name) values ($1) on conflict do nothing"""
         await DB.con.execute(sql, topic[i])
         sql = """select id from categories where name = $1"""
