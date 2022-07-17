@@ -106,7 +106,9 @@ async def seek_tags_info(seek: list, last_page: int):
         sql = """select iss.name_sub from items_subcategories as iss
                  join items as i
                  on iss.item_id = i.id
-                where i.id=$1 limit 20 offset 1"""
+                 join categories_subcategories as cs 
+                 on cs.subcategory_name = iss.name_sub
+                where i.id=$1 and cs.category_id = 56 limit 20 offset 1"""
         name = await DB.con.fetch(sql, items["id"])
         l.append({"id":items["id"], "latitude": items["latitude"],"longtitude": items["longtitude"],"izgot":[dict(**x) for x in name] })
     return l
