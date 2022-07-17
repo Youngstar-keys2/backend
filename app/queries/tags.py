@@ -103,7 +103,7 @@ async def seek_tags_info(seek: list, last_page: int):
     tags = await DB.con.fetch(sql, seek, 20, last_page, len(seek))
     l = []
     for items in tags:
-        sql = """select iss.name_sub from items_subcategories as iss
+        sql = """select distinct(iss.name_sub) from items_subcategories as iss
                  join items as i
                  on iss.item_id = i.id
                  join categories_subcategories as cs 
