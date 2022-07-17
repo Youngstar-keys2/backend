@@ -29,5 +29,5 @@ async def get_seek(
     back = await tags.seek_tags_info(list, page)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"tags": [dict(**x) for x in back]},
+        content={"tags": back},
     )

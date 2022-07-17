@@ -100,10 +100,20 @@ async def seek_tags_info(seek: list, last_page: int):
              where cnt = $4
              limit $2
              offset $3"""
-    tags = await DB.con.fetch(sql, seek, 30, last_page, len(seek))
-    return tags
+    tags = await DB.con.fetch(sql, seek, 20, last_page, len(seek))
+    l = []
+    for items in tags:
+        sql = """select iss.name_sub from items_subcategories as iss
+                 join items as i
+                 on iss.item_id = i.id
+                where i.id=$1 limit 20 offset 1"""
+        name = await DB.con.fetch(sql, items["id"])
+        l.append({"id":items["id"], "latitude": items["latitude"],"longtitude": items["longtitude"],"izgot":[dict(**x) for x in name] })
+    return l
 
 
 async def get_tags(category: str, page: int):
     sql = """select s.name from subcategories as s join categories as c on  s.parent_category = c.id where c.name = $1 limit $2 offset $3"""
     return await DB.con.fetch(sql, category, 100, page)
+
+
