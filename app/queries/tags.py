@@ -103,12 +103,22 @@ async def seek_tags_info(seek: list, last_page: int):
     tags = await DB.con.fetch(sql, seek, 20, last_page, len(seek))
     l = []
     for items in tags:
-        sql = """select distinct(iss.name_sub) from items_subcategories as iss
-                 join items as i
-                 on iss.item_id = i.id
-                 join categories_subcategories as cs 
-                 on cs.subcategory_name = iss.name_sub
-                where i.id=$1 and cs.category_id = 56 limit 20 offset 1"""
+        sql = """
+            select distinct(iss.name_sub) from items as i 
+            join items_subcategories as iss
+            on i.id = iss.item_id
+            join categories_subcategories cs 
+            on cs.subcategory_name = iss.name_sub 
+            where cs.category_id = 56 and i.id = $1
+        """
+        # sql = """select distinct(iss.name_sub) from items_subcategories as iss
+        #          join items as i
+        #          on iss.item_id = i.id
+        #          join items_subcategories as iss2
+        #          on i.id = iss2.item_id
+        #          join categories_subcategories as cs 
+        #          on cs.subcategory_name = iss2.name_sub
+        #         where i.id=$1 and cs.category_id = 56 limit 20 offset 1"""
         name = await DB.con.fetch(sql, items["id"])
         l.append({"id":items["id"], "latitude": items["latitude"],"longtitude": items["longtitude"],"izgot":[dict(**x) for x in name] })
     return l
@@ -125,3 +135,6 @@ async def get_tags(category: str, page: int):
     return await DB.con.fetch(sql, category, 100, page)
 
 
+async def get_product_sql(name: str):
+    sql = """  """
+    

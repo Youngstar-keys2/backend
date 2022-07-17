@@ -31,3 +31,11 @@ async def get_seek(
         status_code=status.HTTP_200_OK,
         content={"tags": back},
     )
+
+@tags_router.get("/production")
+async def get_product(name: str):
+    back = await tags.get_product_sql(name)
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"tags": [dict(**x) for x in back]},
+    )

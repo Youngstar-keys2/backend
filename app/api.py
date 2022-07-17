@@ -11,6 +11,8 @@ from app.db.db import DB
 from app.exceptions import CommonException, InternalServerError
 from app.routers.registr import registr_router
 from app.routers.tags import tags_router
+from app.routers.neiro import neiro_router
+from app.routers.newcategory import category_router
 from starlette.middleware.cors import CORSMiddleware
 
 logger = getLogger(__name__)
@@ -83,6 +85,8 @@ async def unicorn_api_exception_handler(request: Request, exc: CommonException):
 
 app.include_router(registr_router)
 app.include_router(tags_router)
+app.include_router(neiro_router)
+app.include_router(category_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

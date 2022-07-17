@@ -29,3 +29,10 @@ class OutputNeiro(BaseModel):
     group: str
     tex_regl: str
     code: int
+
+
+class Newcategory(FormForNeiro):
+    group: str
+    tex_regl: str
+    code: int
+    name: str
